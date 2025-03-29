@@ -1,0 +1,14 @@
+
+<mat-toolbar>
+  <span>Our friendly budget</span>
+  <div class="flex-space"></div>
+  <mat-slide-toggle [(ngModel)]="darkMode">
+    Dark Mode
+  </mat-slide-toggle>
+</mat-toolbar>
+<div class="content">
+  <app-file-drop></app-file-drop>
+  <app-overview-card></app-overview-card>
+  <app-merchant-card></app-merchant-card>
+  <app-category-card></app-category-card>
+</div>

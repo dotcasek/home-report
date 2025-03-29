@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+
+mat-card {
+    height: 200px;
+    background: var(--sys-surface-container);
+    color: var(--sys-on-surface);
+    border-color: var(--sys-outline);
+}
+
+button {
+    @include mat.button-overrides((
+        filled-container-color: var(--sys-primary-container),
+        filled-label-text-color: var(--sys-on-primary-container),
+    ));
+}

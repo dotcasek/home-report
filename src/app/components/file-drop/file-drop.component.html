@@ -1,0 +1,17 @@
+<mat-card appearance="outlined">
+    <mat-card-content>
+      <span style="font-size: 1.5rem;">Upload statement</span>    
+      <!-- <input matInput type="file" class="file-upload" onchange="console.log(event.target.files)">
+      <button mat-flat-button>Upload</button> -->
+      <div style="display: flex; flex-direction: column; gap: 12px; padding:20px; position: absolute; bottom: 0px;">
+        <span>{{selectedFile?.name}}</span>
+
+        <button mat-flat-button (click)="fileInput.click()">Choose File</button>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display:none;">
+  
+      </div>
+    </mat-card-content>
+
+  </mat-card>
+
+

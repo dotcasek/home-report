@@ -1,0 +1,55 @@
+@use '@angular/material' as mat;
+
+.content {
+    padding: 32px;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 200px 400px;
+
+    grid-gap: 20px;
+}
+
+mat-toolbar {
+    @include mat.toolbar-overrides((
+        container-background-color: var(--sys-primary-container),
+        container-text-color: var(--sys-on-primary-container),
+      ));
+}
+
+
+
+button {
+    @include mat.button-overrides((
+        filled-container-color: var(--sys-primary-container),
+        filled-label-text-color: var(--sys-on-primary-container),
+    ));
+}
+
+mat-slide-toggle {
+    @include mat.slide-toggle-overrides((
+        track-outline-color: var(--sys-on-primary-container),
+        label-text-color: var(--sys-on-primary-container),
+
+        selected-icon-color: var(--sys-on-primary-container),
+        selected-track-color: var(--sys-on-primary-container),
+        selected-focus-track-color: var(--sys-on-primary-container),
+
+        selected-pressed-state-layer-color: var(--sys-primary-container),
+        selected-pressed-handle-color: var(--sys-primary-container),
+        selected-pressed-track-color: var(--sys-on-primary-container),
+
+        unselected-hover-state-layer-color: var(--sys-on-surface),
+        unselected-hover-handle-color: var(--sys-on-surface-variant),
+        unselected-hover-track-color: var(--sys-surface-variant),
+
+        selected-hover-track-color: var(--sys-primary-container),
+        // unselected-hover-handle-color: var(--sys-on-surface-variant),
+        // unselected-hover-track-color: var(--sys-surface-variant),
+    ));
+}
+
+
+.flex-space {
+    flex: 1 0 auto;
+}
