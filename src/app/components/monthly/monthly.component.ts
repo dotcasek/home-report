@@ -65,18 +65,11 @@ export class MonthlyComponent {
       )
     );
 
-    // Sort unique categories (labels) by date
-    const sortedCategories = uniqueCategoryies.sort((a, b) => {
-      const dateA = new Date(a);
-      const dateB = new Date(b);
-      return dateA.getTime() - dateB.getTime();
-    });
-
     this.barChartData = {
-      labels: sortedCategories, // Sorted category names
+      labels: uniqueCategoryies, // Unique category names
       datasets: Object.entries(top10SpendingPerPerson).map(([person, spending]) => ({
       label: person,
-      data: sortedCategories.map(
+      data: uniqueCategoryies.map(
         category => spending.find(item => item.category === category)?.amount || 0
       )
       }))
