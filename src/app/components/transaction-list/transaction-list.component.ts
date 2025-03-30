@@ -36,6 +36,10 @@ export class TransactionListComponent {
     this.dataSource.sort = this.sort;
   }
 
+  ngOnDestroy() {
+    this.result.unsubscribe();
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

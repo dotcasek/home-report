@@ -9,7 +9,6 @@ import { toObservable } from '@angular/core/rxjs-interop';
   providedIn: 'root'
 })
 export class FileReaderService {
-  private delay = 1000; // Simulate network delay
 
   private transactions: Transaction[] = [];
   private filter: {start: Date | null, end: Date | null} | null = null;
@@ -65,13 +64,10 @@ export class FileReaderService {
     )}
 
     if(this.filter?.end) {
-
       ft = ft.filter(t => 
         t.date <= this.filter!.end!
     )}
-
     this.filteredTransactions.set(ft);
-
   }
   
   get transactionsData() {

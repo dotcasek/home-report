@@ -4,6 +4,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { OverviewData } from '../../models/OverviewData';
 import { FileReaderService } from '../../services/file-reader.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-merchant-card',
@@ -13,6 +14,7 @@ import { FileReaderService } from '../../services/file-reader.service';
 })
 export class MerchantCardComponent {
   fileService = inject(FileReaderService)
+  private subscription: Subscription = new Subscription();
 
   public barChartLegend = true;
   public barChartPlugins = [];
@@ -92,8 +94,12 @@ export class MerchantCardComponent {
     };
   }
 
+  ngOnDestroy() {
+    this.result.unsubscribe();
+    this.subscription.unsubscribe();
+  }
   ngOnInit() {
-    this.fileService.query$.subscribe(() => {
+    this.subscription = this.fileService.query$.subscribe(() => {
       this.updateBarChartData();
     });
   }
