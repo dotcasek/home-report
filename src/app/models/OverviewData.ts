@@ -5,6 +5,7 @@ export interface OverviewData {
 }
 
 export interface Transaction {
+    id: string,
     date: Date,
     name: string,
     merchant: string,

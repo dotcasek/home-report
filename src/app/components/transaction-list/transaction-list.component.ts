@@ -8,22 +8,19 @@ import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import { Transaction } from '../../models/OverviewData';
 import { CommonModule } from '@angular/common';
 import {MatSort, MatSortModule} from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-transaction-list',
-  imports: [MatCardModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatTableModule, CommonModule, MatSortModule],
+  imports: [MatCardModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatTableModule, CommonModule, MatSortModule, MatIconModule],
   templateUrl: './transaction-list.component.html',
   styleUrl: './transaction-list.component.scss'
 })
 export class TransactionListComponent {
   fileService = inject(FileReaderService)
 
-  displayedColumns: string[] = ['date', 'name', 'merchant', 'category', 'amount'];
+  displayedColumns: string[] = ['date', 'name', 'merchant', 'category', 'amount', 'hide'];
   
-  // transactionResource = resource({
-  //   loader: () => this.fileService.getTransactions()
-  // })
-
   result = this.fileService.query$.subscribe(e => this.dataSource.data = e);
   
   dataSource = new MatTableDataSource<Transaction>([]);
@@ -58,6 +55,10 @@ export class TransactionListComponent {
     return this.getFilteredAndPagedData()
       .map(t => Number(t.amount))
       .reduce((acc, value) => acc + value, 0);
+  }
+
+  toggleTransaction(element: Transaction){
+    this.fileService.showHide(element.id)
   }
 
 }

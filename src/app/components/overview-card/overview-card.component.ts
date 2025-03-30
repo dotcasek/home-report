@@ -35,11 +35,12 @@ export class OverviewCardComponent {
   });
   private updateBarChartData() {
     let data:ChartDataset<'bar'>[] = []
-    if(this.overviewData[0] && this.overviewData[1]) {
-      data = [
-        {data: [this.overviewData[0]?.spending], label: this.overviewData[0]?.name, },
-        {data: [this.overviewData[1]?.spending], label: this.overviewData[1]?.name, }
-      ]
+    if (this.overviewData.length === 0) {
+      data = [{ data: [0], label: 'No Data' }];
+    } else {
+      data = this.overviewData.map(d => {
+        return { data: [d.spending], label: d.name };
+      });
     }
     this.barChartData = {
       labels: ['Spending'],

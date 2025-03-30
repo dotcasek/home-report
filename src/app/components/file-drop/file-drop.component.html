@@ -20,18 +20,24 @@
           }
         </mat-form-field>   
         <button mat-mini-fab aria-label="clear" (click)="clearDate()" style="margin-left: 12px;">
-            <mat-icon style="color: var(--mat-sys-primary);">cancel</mat-icon>
+            <mat-icon style="color: var(--mat-sys-primary);">refresh</mat-icon>
         </button>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 12px; padding:20px; position: absolute; bottom: 0px;">
+
+      <mat-slider min="0" [max]="maxAmount" discrete [displayWith]="formatLabel" (change)="setRangeFilter()">
+        <input [value]="minAmount" matSliderStartThumb [(ngModel)]="startValue">
+        <input [value]="maxAmount" matSliderEndThumb [(ngModel)]="endValue">
+      </mat-slider>
+    </mat-card-content>
+    <mat-card-footer class="example-card-footer">
+      <div>
         <span>{{selectedFile?.name}}</span>
 
-        <button mat-flat-button (click)="fileInput.click()">Choose File</button>
+        <button mat-flat-button (click)="fileInput.click()" style="margin-top: 8px;">Choose File</button>
         <input type="file" #fileInput (change)="onFileSelected($event)" style="display:none;">
   
       </div>
-    </mat-card-content>
-
+    </mat-card-footer>
   </mat-card>
 
 
