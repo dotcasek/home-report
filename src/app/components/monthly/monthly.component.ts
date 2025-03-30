@@ -4,6 +4,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { OverviewData } from '../../models/OverviewData';
 import { FileReaderService } from '../../services/file-reader.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-monthly',
@@ -13,6 +14,7 @@ import { FileReaderService } from '../../services/file-reader.service';
 })
 export class MonthlyComponent {
   fileService = inject(FileReaderService)
+  private subscription: Subscription = new Subscription();
 
   public barChartLegend = true;
   public barChartPlugins = [];
@@ -65,19 +67,30 @@ export class MonthlyComponent {
       )
     );
 
+    // Sort unique categories (labels) by date
+    const sortedCategories = uniqueCategoryies.sort((a, b) => {
+      const dateA = new Date(a);
+      const dateB = new Date(b);
+      return dateA.getTime() - dateB.getTime();
+    });
+
     this.barChartData = {
-      labels: uniqueCategoryies, // Unique category names
+      labels: sortedCategories, // Sorted category names
       datasets: Object.entries(top10SpendingPerPerson).map(([person, spending]) => ({
       label: person,
-      data: uniqueCategoryies.map(
+      data: sortedCategories.map(
         category => spending.find(item => item.category === category)?.amount || 0
       )
       }))
     };
   }
 
+  ngOnDestroy() {
+    this.result.unsubscribe();
+    this.subscription.unsubscribe();
+  }
   ngOnInit() {
-    this.fileService.query$.subscribe(() => {
+    this.subscription = this.fileService.query$.subscribe(() => {
       this.updateBarChartData();
     });
   }

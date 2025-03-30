@@ -5,6 +5,7 @@ import { ChartConfiguration, ChartDataset } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { OverviewData, Transaction } from '../../models/OverviewData';
 import { FileReaderService } from '../../services/file-reader.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-overview-card',
@@ -14,6 +15,7 @@ import { FileReaderService } from '../../services/file-reader.service';
 })
 export class OverviewCardComponent {
   fileService = inject(FileReaderService)
+  private subscription: Subscription = new Subscription();
 
   public barChartLegend = true;
   public barChartPlugins = [];
@@ -46,8 +48,12 @@ export class OverviewCardComponent {
     };
   }
 
+  ngOnDestroy() {
+    this.result.unsubscribe();
+    this.subscription.unsubscribe();
+  }
   ngOnInit() {
-    this.fileService.query$.subscribe(() => {
+    this.subscription = this.fileService.query$.subscribe(() => {
       this.updateBarChartData();
     });
   }

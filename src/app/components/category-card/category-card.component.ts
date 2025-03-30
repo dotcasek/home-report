@@ -4,6 +4,7 @@ import { ChartConfiguration, ChartDataset } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { OverviewData, Transaction } from '../../models/OverviewData';
 import { FileReaderService } from '../../services/file-reader.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-category-card',
@@ -13,7 +14,7 @@ import { FileReaderService } from '../../services/file-reader.service';
 })
 export class CategoryCardComponent {
   fileService = inject(FileReaderService)
-
+  private subscription: Subscription = new Subscription();
   public barChartLegend = true;
   public barChartPlugins = [];
   groupedTransactions: Record<string, Record<string, number>> = {};
@@ -75,11 +76,17 @@ export class CategoryCardComponent {
     };
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+    this.result.unsubscribe();
+  }
   ngOnInit() {
-    this.fileService.query$.subscribe(() => {
+    this.subscription = this.fileService.query$.subscribe(() => {
       this.updateBarChartData();
     });
   }
+
+
 
   constructor() {
     this.result.add(() => {
