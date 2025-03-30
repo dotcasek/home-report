@@ -1,4 +1,4 @@
-import { Component, effect, Inject, Renderer2, signal } from '@angular/core';
+import { Component, effect, inject, Inject, Renderer2, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatCardModule} from '@angular/material/card';
@@ -11,6 +11,8 @@ import { MerchantCardComponent } from './components/merchant-card/merchant-card.
 import { CategoryCardComponent } from './components/category-card/category-card.component';
 import { TransactionListComponent } from "./components/transaction-list/transaction-list.component";
 import { MonthlyComponent } from "./components/monthly/monthly.component";
+import {BreakpointObserver, LayoutModule} from '@angular/cdk/layout';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +27,9 @@ import { MonthlyComponent } from "./components/monthly/monthly.component";
     MonthlyComponent,
     CategoryCardComponent,
     TransactionListComponent,
-    MonthlyComponent
+    MonthlyComponent,
+    LayoutModule,
+    CommonModule
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -33,6 +37,14 @@ import { MonthlyComponent } from "./components/monthly/monthly.component";
 export class AppComponent {
   title = 'home-report';
   darkMode = signal(false);
+  breakpointObserver = inject(BreakpointObserver)
+  isMobile = signal(false);
+
+  constructor() {
+    this.breakpointObserver.observe('(max-width: 599px)').subscribe(result => {
+      this.isMobile.set(result.matches);
+    });
+  }
 
   applyDarkMode = effect(() => {
     const darkMode = this.darkMode();

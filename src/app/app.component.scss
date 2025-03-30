@@ -12,6 +12,15 @@
     grid-gap: 20px;
 }
 
+.mobile-content {
+    padding: 10px;
+    min-height: 100vh;
+    // grid-template-rows: 300px repeat(3, 400px);
+
+    // grid-gap: 20px;
+
+}
+
 mat-toolbar {
     @include mat.toolbar-overrides((
         container-background-color: var(--mat-sys-primary-container),
