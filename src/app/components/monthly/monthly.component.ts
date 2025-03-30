@@ -33,7 +33,6 @@ export class MonthlyComponent {
 
       return acc;
     }, {} as Record<string, Record<string, number>>);
-    console.log('month', this.groupedTransactions)
   });
 
   private updateBarChartData() {

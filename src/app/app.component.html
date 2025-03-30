@@ -8,8 +8,8 @@
 </mat-toolbar>
 
 
-<div class="content">
-  <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 20px;">
+<div [ngClass]="isMobile() ? 'mobile-content' : 'content'">
+  <div style="display: grid; grid-gap: 20px;" [ngStyle]="{ 'grid-template-columns': isMobile() ? '1fr' : '1fr 1fr' }">
     <app-file-drop></app-file-drop>
     <app-overview-card></app-overview-card>  
   </div>
