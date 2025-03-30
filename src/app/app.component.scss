@@ -15,9 +15,9 @@
 .mobile-content {
     padding: 10px;
     min-height: 100vh;
-    // grid-template-rows: 300px repeat(3, 400px);
-
-    // grid-gap: 20px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
 
 }
 
