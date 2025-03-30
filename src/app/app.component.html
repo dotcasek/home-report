@@ -6,9 +6,15 @@
     Dark Mode
   </mat-slide-toggle>
 </mat-toolbar>
+
+
 <div class="content">
-  <app-file-drop></app-file-drop>
-  <app-overview-card></app-overview-card>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 20px;">
+    <app-file-drop></app-file-drop>
+    <app-overview-card></app-overview-card>  
+  </div>
   <app-merchant-card></app-merchant-card>
   <app-category-card></app-category-card>
+  <app-monthly></app-monthly>
+  <app-transaction-list></app-transaction-list>
 </div>

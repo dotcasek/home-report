@@ -1,8 +1,5 @@
 @use '@angular/material' as mat;
 
 mat-card {
-    height: 200px;
-    background: var(--sys-surface-container);
-    color: var(--sys-on-surface);
-    border-color: var(--sys-outline);
+    height: 300px;
 }

@@ -1,17 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { ChartConfiguration, ChartDataset } from 'chart.js';
+import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { OverviewData, Transaction } from '../../models/OverviewData';
+import { OverviewData } from '../../models/OverviewData';
 import { FileReaderService } from '../../services/file-reader.service';
 
 @Component({
-  selector: 'app-category-card',
+  selector: 'app-monthly',
   imports: [MatCardModule, BaseChartDirective],
-  templateUrl: './category-card.component.html',
-  styleUrl: './category-card.component.scss'
+  templateUrl: './monthly.component.html',
+  styleUrl: './monthly.component.scss'
 })
-export class CategoryCardComponent {
+export class MonthlyComponent {
   fileService = inject(FileReaderService)
 
   public barChartLegend = true;
@@ -19,18 +19,19 @@ export class CategoryCardComponent {
   groupedTransactions: Record<string, Record<string, number>> = {};
 
   overviewData: OverviewData[] = [];
-  result = this.fileService.query$.subscribe(e => {
-    this.groupedTransactions = e.reduce((acc, transaction) => {
-
-      let category = transaction.category;
-
+  result = this.fileService.query$.subscribe(transactions => {
+    this.groupedTransactions = transactions.reduce((acc, transaction) => {
+      const month = new Date(transaction.date).toLocaleString('default', { month: 'long', year: 'numeric' });
       const person = transaction.name || 'Unknown';
-      if (!acc[category]) {
-        acc[category] = {};
+
+      if (!acc[month]) {
+        acc[month] = {};
       }
-      acc[category][person] = (acc[category][person] || 0) + Number(transaction.amount);
+      acc[month][person] = (acc[month][person] || 0) + Number(transaction.amount);
+
       return acc;
     }, {} as Record<string, Record<string, number>>);
+    console.log('month', this.groupedTransactions)
   });
 
   private updateBarChartData() {
@@ -64,11 +65,18 @@ export class CategoryCardComponent {
       )
     );
 
+    // Sort unique categories (labels) by date
+    const sortedCategories = uniqueCategoryies.sort((a, b) => {
+      const dateA = new Date(a);
+      const dateB = new Date(b);
+      return dateA.getTime() - dateB.getTime();
+    });
+
     this.barChartData = {
-      labels: uniqueCategoryies, // Unique category names
+      labels: sortedCategories, // Sorted category names
       datasets: Object.entries(top10SpendingPerPerson).map(([person, spending]) => ({
       label: person,
-      data: uniqueCategoryies.map(
+      data: sortedCategories.map(
         category => spending.find(item => item.category === category)?.amount || 0
       )
       }))

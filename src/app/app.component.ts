@@ -9,20 +9,24 @@ import { FileDropComponent } from './components/file-drop/file-drop.component';
 import { OverviewCardComponent } from './components/overview-card/overview-card.component';
 import { MerchantCardComponent } from './components/merchant-card/merchant-card.component';
 import { CategoryCardComponent } from './components/category-card/category-card.component';
+import { TransactionListComponent } from "./components/transaction-list/transaction-list.component";
+import { MonthlyComponent } from "./components/monthly/monthly.component";
 
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet, 
-    MatToolbarModule, 
+    MatToolbarModule,
     MatSlideToggleModule,
     MatButtonModule,
     FormsModule,
     FileDropComponent,
     OverviewCardComponent,
     MerchantCardComponent,
-    CategoryCardComponent
-  ],
+    MonthlyComponent,
+    CategoryCardComponent,
+    TransactionListComponent,
+    MonthlyComponent
+],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
