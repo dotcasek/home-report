@@ -20,10 +20,10 @@ export class TransactionListComponent {
   fileService = inject(FileReaderService)
 
   displayedColumns: string[] = ['date', 'name', 'merchant', 'category', 'amount', 'hide'];
-  
-  result = this.fileService.query$.subscribe(e => this.dataSource.data = e);
-  
   dataSource = new MatTableDataSource<Transaction>([]);
+
+  result = this.fileService.query$.subscribe(e => this.dataSource!.data = e);
+  
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;

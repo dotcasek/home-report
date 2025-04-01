@@ -45,7 +45,7 @@ export class FileReaderService {
       data.slice(1).forEach((row: any[]) => {
         if (row.length > 0 && row[5] && row[2] != 2441) {
 
-          let merchant = row[3];
+          let merchant: string = row[3];
           merchant = merchant.replace('SQ *', '')
           merchant = merchant.replace('TST* ', '')
           merchant = merchant.replace('SP ', '')
@@ -66,12 +66,26 @@ export class FileReaderService {
             merchant = 'TATTE'
           }
 
+          let category: string = row[4] || 'Uncategorized';
+          if (merchant.toUpperCase().includes('STOP & SHOP') ||
+            merchant.toUpperCase().includes('WHOLEFDS') ||
+            merchant.toUpperCase().includes('RANDALLS') ||
+            merchant.toUpperCase().includes('CROSBY\'S') ||
+            merchant.toUpperCase().includes('H-E-B') ||
+            merchant.toUpperCase().includes('TRADER JOE') ||
+            merchant.toUpperCase().includes('SHUBIE\'S') ||
+            merchant.toUpperCase().includes('GROVE MARKET') ||
+            merchant.toUpperCase().includes('CENTRAL MARKET') 
+          ) {
+            category = 'GROCERIES'
+          }
+
           const transaction: Transaction = {
             id: uuidv4(),
             date: new Date(row[0]), // Transaction Date
             name: row[2] === 2441 ? 'Derek' : 'Madison', // Card No.
             merchant: merchant, // Description
-            category: row[4], // Category
+            category: category, // Category
             amount: row[5]?.toString() || '', // Debit
             isHidden: false
           };
