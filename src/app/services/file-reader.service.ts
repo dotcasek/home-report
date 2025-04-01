@@ -44,11 +44,33 @@ export class FileReaderService {
       const transactions: Transaction[] = [];
       data.slice(1).forEach((row: any[]) => {
         if (row.length > 0 && row[5] && row[2] != 2441) {
+
+          let merchant = row[3];
+          merchant = merchant.replace('SQ *', '')
+          merchant = merchant.replace('TST* ', '')
+          merchant = merchant.replace('SP ', '')
+
+          if (merchant.toUpperCase().includes('AMAZON') || merchant.toUpperCase().includes('AMZN')) {
+            merchant = 'AMAZON'
+          }
+          if (merchant.toUpperCase().includes('JETBLUE')) {
+            merchant = 'JETBLUE'
+          }
+          if (merchant.toUpperCase().includes('FEDEX')) {
+            merchant = 'FEDEX'
+          }
+          if (merchant.toUpperCase().includes('CVS')) {
+            merchant = 'CVS'
+          }
+          if (merchant.toUpperCase().includes('TATTE')) {
+            merchant = 'TATTE'
+          }
+
           const transaction: Transaction = {
             id: uuidv4(),
             date: new Date(row[0]), // Transaction Date
             name: row[2] === 2441 ? 'Derek' : 'Madison', // Card No.
-            merchant: row[3], // Description
+            merchant: merchant, // Description
             category: row[4], // Category
             amount: row[5]?.toString() || '', // Debit
             isHidden: false

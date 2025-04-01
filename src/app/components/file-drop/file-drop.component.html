@@ -56,13 +56,13 @@
         <mat-panel-title> Transaction Range </mat-panel-title>
       </mat-expansion-panel-header>
       <div style="display: flex; flex-direction: row; gap: 12px;">
-        <div class="slider-label">{{ minAmount() >= 1000 ? (minAmount() / 1000).toFixed(1) + 'k' : minAmount() }}</div>
+        <div class="slider-label">{{ startValue() >= 1000 ? (startValue() / 1000).toFixed(1) + 'k' : startValue() }}</div>
 
         <mat-slider [min]="minAmount()" [max]="maxAmount()" (change)="setRangeFilter()">
-          <input [value]="minAmount()" matSliderStartThumb [(ngModel)]="startValue">
-          <input [value]="maxAmount()" matSliderEndThumb [(ngModel)]="endValue">
+          <input [value]="startValue()" matSliderStartThumb [ngModel]="startValue()" (ngModelChange)="startValue.set($event)">
+          <input [value]="endValue()" matSliderEndThumb [ngModel]="endValue()" (ngModelChange)="endValue.set($event)">
         </mat-slider>
-        <div class="slider-label">{{ maxAmount() >= 1000 ? (maxAmount() / 1000).toFixed(1) + 'k' : maxAmount() }}</div>
+        <div class="slider-label">{{ endValue() >= 1000 ? (endValue() / 1000).toFixed(1) + 'k' : endValue() }}</div>
       </div>
     </mat-expansion-panel>
   </mat-accordion>
