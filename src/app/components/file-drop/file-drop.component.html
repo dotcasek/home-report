@@ -1,7 +1,33 @@
-<mat-card appearance="outlined">
-    <mat-card-content>
-      <span style="font-size: 1.5rem;">Upload statement</span>    
-      <div style="margin-top: 20px">
+<!-- <mat-card appearance="outlined">
+    <mat-card-content> -->
+<div class="filter-panel">
+  <span style="font-size: 1.5rem;">Filters</span>
+
+  <!-- File upload -->
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title> File Upload </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div style="display: flex; flex-direction: column; gap: 12px; align-items: start;">
+        <button mat-flat-button (click)="fileInput.click()">Choose File</button>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display:none;">
+        <span>{{selectedFile?.name}}</span>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <!-- Datepicker -->
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Date Range </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div style="display: flex;">
+        <button mat-mini-fab aria-label="clear" (click)="clearDate()" style="margin-right: 12px;">
+          <mat-icon style="color: var(--mat-sys-primary);">refresh</mat-icon>
+        </button>
+
         <mat-form-field>
           <mat-label>Enter a date range</mat-label>
           <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
@@ -11,33 +37,72 @@
           <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-date-range-picker #picker></mat-date-range-picker>
-        
+
           @if (range.controls.start.hasError('matStartDateInvalid')) {
-            <mat-error>Invalid start date</mat-error>
+          <mat-error>Invalid start date</mat-error>
           }
           @if (range.controls.end.hasError('matEndDateInvalid')) {
-            <mat-error>Invalid end date</mat-error>
+          <mat-error>Invalid end date</mat-error>
           }
-        </mat-form-field>   
-        <button mat-mini-fab aria-label="clear" (click)="clearDate()" style="margin-left: 12px;">
-            <mat-icon style="color: var(--mat-sys-primary);">refresh</mat-icon>
-        </button>
+        </mat-form-field>
       </div>
+    </mat-expansion-panel>
+  </mat-accordion>
 
-      <mat-slider min="0" [max]="maxAmount" discrete [displayWith]="formatLabel" (change)="setRangeFilter()">
-        <input [value]="minAmount" matSliderStartThumb [(ngModel)]="startValue">
-        <input [value]="maxAmount" matSliderEndThumb [(ngModel)]="endValue">
-      </mat-slider>
-    </mat-card-content>
-    <mat-card-footer class="example-card-footer">
-      <div>
-        <span>{{selectedFile?.name}}</span>
+  <!-- amount slider -->
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Transaction Range </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div style="display: flex; flex-direction: row; gap: 12px;">
+        <div class="slider-label">{{ minAmount() >= 1000 ? (minAmount() / 1000).toFixed(1) + 'k' : minAmount() }}</div>
 
-        <button mat-flat-button (click)="fileInput.click()" style="margin-top: 8px;">Choose File</button>
-        <input type="file" #fileInput (change)="onFileSelected($event)" style="display:none;">
-  
+        <mat-slider [min]="minAmount()" [max]="maxAmount()" (change)="setRangeFilter()">
+          <input [value]="minAmount()" matSliderStartThumb [(ngModel)]="startValue">
+          <input [value]="maxAmount()" matSliderEndThumb [(ngModel)]="endValue">
+        </mat-slider>
+        <div class="slider-label">{{ maxAmount() >= 1000 ? (maxAmount() / 1000).toFixed(1) + 'k' : maxAmount() }}</div>
       </div>
-    </mat-card-footer>
-  </mat-card>
+    </mat-expansion-panel>
+  </mat-accordion>
 
+  <!-- category filters slider -->
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Select Categories </mat-panel-title>
+      </mat-expansion-panel-header>
+      <button mat-button (click)="selectAllCategories()">Select All</button>
+      <button mat-button (click)="clearCategorySelection()">Clear Selection</button>
+      <mat-selection-list #categoryList (selectionChange)="setCategoryFilter()">
+        @for (category of this.fileService.displayCategories(); track $index) {
+        <mat-list-option [value]="category">{{category}}</mat-list-option>
+        }
+      </mat-selection-list>
+    </mat-expansion-panel>
+  </mat-accordion>
 
+  <!-- merchant filters -->
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Select Merchants </mat-panel-title>
+      </mat-expansion-panel-header>
+      <button mat-button (click)="selectAllMerchants()">Select All</button>
+      <button mat-button (click)="clearMerchantSelection()">Clear Selection</button>
+      <mat-selection-list #merchantList (selectionChange)="setMerchantFilter()">
+        @for (merchant of visibleMerchants(); track $index) {
+        <mat-list-option [value]="merchant">{{merchant}}</mat-list-option>
+        }
+      </mat-selection-list>
+      @if (showMoreMerchantsButton()) {
+      <button mat-button (click)="showMoreMerchants()">Show More</button>
+      }
+      @if (showLessMerchantsButton()) {
+      <button mat-button (click)="showLessMerchants()">Show Less</button>
+      }
+
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

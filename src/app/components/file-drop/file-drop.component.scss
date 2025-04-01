@@ -1,15 +1,44 @@
 
-mat-card {
-    height: 300px;
-}
+// mat-card {
+//     height: 300px;
+// }
 
 mat-slider {
-    width: 300px;
-    margin-top: 24px;
+    width: 50%;
+    // margin-top: 24px;
   }
 
   .example-card-footer {
-    position: absolute;
-    bottom: 0;
+    // position: absolute;
+    // bottom: 0;
     padding: 0 16px 16px 16px;
   }
+
+.slider-label {
+  display: flex; 
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-primary);
+  border-radius: var(--mat-sys-corner-medium);
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  // text-align: center;
+  justify-content: center;
+}
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px;
+  min-height: calc(100vh - 84px);
+  // overflow: auto;
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface);
+
+}
+
+ul {
+  list-style-type: none;
+  margin-top: 4px;
+}

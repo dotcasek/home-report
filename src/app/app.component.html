@@ -1,5 +1,8 @@
-
 <mat-toolbar>
+  <button mat-icon-button aria-label="side nav" (click)="sidenav.toggle()">
+    <mat-icon style="color: var(--mat-sys-on-primary-container)">menu</mat-icon>
+  </button>
+
   <span>Our friendly budget</span>
   <div class="flex-space"></div>
   <mat-slide-toggle [(ngModel)]="darkMode">
@@ -7,14 +10,19 @@
   </mat-slide-toggle>
 </mat-toolbar>
 
-
-<div [ngClass]="isMobile() ? 'mobile-content' : 'content'">
-  <div style="display: grid; grid-gap: 20px;" [ngStyle]="{ 'grid-template-columns': isMobile() ? '1fr' : '1fr 1fr' }">
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav [mode]="isMobile() ? 'over' : 'side'" opened>
     <app-file-drop></app-file-drop>
-    <app-overview-card></app-overview-card>  
-  </div>
-  <app-merchant-card></app-merchant-card>
-  <app-category-card></app-category-card>
-  <app-monthly></app-monthly>
-  <app-transaction-list></app-transaction-list>
-</div>
+  </mat-sidenav>
+  <mat-sidenav-content style="padding: 10px;">
+    <div [ngClass]="isMobile() ? 'mobile-content' : 'content'">
+      <app-overview-card></app-overview-card>  
+      <app-merchant-card></app-merchant-card>
+      <app-category-card></app-category-card>
+      <app-monthly></app-monthly>
+      <app-transaction-list></app-transaction-list>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+

@@ -1,7 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { Transaction } from '../models/OverviewData';
-import { Observable, switchMap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { v4 as uuidv4 } from 'uuid';
 import { map } from 'rxjs';
@@ -13,109 +12,225 @@ import { map } from 'rxjs';
 export class FileReaderService {
 
   private transactions: Transaction[] = [];
-  private dateFilter: {start: Date | null, end: Date | null} | null = null;
-  private rangeFilter: {start: number, end: number} | null = null;
+  private dateFilter: { start: Date | null, end: Date | null } | null = null;
+  private rangeFilter: { start: number, end: number } | null = null;
+
+  private categoryFilter: string[] = [];
+  private merchantFilter: string[] = [];
 
   dataRange = signal<[number, number]>([0, 100])
 
+  displayCategories = signal<string[]>([]);
+  displayMerchants = signal<string[]>([]);
+
   filteredTransactions = signal<Transaction[]>([] as Transaction[]);
   query$ = toObservable(this.filteredTransactions).pipe(
-    map(transactions => 
+    map(transactions =>
       transactions.filter(transaction => !transaction.isHidden)
     )
   );
-  rangeQuery$ = toObservable(this.dataRange);
 
-
-  
   addFile(inputFile: File) {
     this.transactions = [];
     const file = inputFile;
     const fileReader = new FileReader();
     fileReader.onload = (e: any) => {
-        const arrayBuffer = e.target.result;
-        const workbook = XLSX.read(arrayBuffer, { type: 'buffer', cellDates: true });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const data: any[] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      const arrayBuffer = e.target.result;
+      const workbook = XLSX.read(arrayBuffer, { type: 'buffer', cellDates: true });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data: any[] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        const transactions: Transaction[] = [];
-        data.slice(1).forEach((row: any[]) => {
-            if (row.length > 0 && row[5]) {
-                const transaction: Transaction = {
-                    id: uuidv4(),
-                    date: new Date(row[0]), // Transaction Date
-                    name: row[2] === 2441 ? 'Derek' : 'Madison', // Card No.
-                    merchant: row[3], // Description
-                    category: row[4], // Category
-                    amount: row[5]?.toString() || '', // Debit
-                    isHidden: false
-                };
-                transactions.push(transaction);
-            }
-        });
-
-        this.transactions = [...transactions];
-        const amounts = transactions.map(t => parseFloat(t.amount)).filter(amount => !isNaN(amount));
-        const minAmount = Math.min(...amounts);
-        const maxAmount = Math.max(...amounts);
-        this.dataRange.set([minAmount, maxAmount]);
-        
-        this.filteredTransactions.set(this.transactions);
-        if(this.dateFilter) {
-          this.setDateFilter(this.dateFilter.start, this.dateFilter.end)
+      const transactions: Transaction[] = [];
+      data.slice(1).forEach((row: any[]) => {
+        if (row.length > 0 && row[5] && row[2] != 2441) {
+          const transaction: Transaction = {
+            id: uuidv4(),
+            date: new Date(row[0]), // Transaction Date
+            name: row[2] === 2441 ? 'Derek' : 'Madison', // Card No.
+            merchant: row[3], // Description
+            category: row[4], // Category
+            amount: row[5]?.toString() || '', // Debit
+            isHidden: false
+          };
+          transactions.push(transaction);
         }
-        // if(this.rangeFilter) {
-        //   this.setRangeFilter(this.rangeFilter.start, this.rangeFilter.end)
-        // }
-        
+      });
+
+      this.transactions = [...transactions];
+      this.getDataRange(this.transactions);
+
+      this.filteredTransactions.set(this.transactions);
+      this.dateFilter = null;
+      this.rangeFilter = null;
+      this.categoryFilter = [];
+
+      this.applyFilters()
     };
     fileReader.readAsArrayBuffer(file);
   }
 
   showHide(id: string) {
-    const updatedTransactions = this.filteredTransactions().map(transaction => 
+    const updatedTransactions = this.filteredTransactions().map(transaction =>
       transaction.id === id ? { ...transaction, isHidden: !transaction.isHidden } : transaction
     );
     this.filteredTransactions.set(updatedTransactions);
   }
-  
+
   setDateFilter(start: Date | null, end: Date | null) {
-    this.dateFilter = {start: start, end: end}
-    let ft = [...this.transactions]
-
-    if(this.dateFilter?.start) {
-      ft = ft.filter(t => 
-        t.date >= this.dateFilter!.start!
-    )}
-
-    if(this.dateFilter?.end) {
-      ft = ft.filter(t => 
-        t.date <= this.dateFilter!.end!
-    )}
-    this.filteredTransactions.set(ft);
+    this.dateFilter = { start: start, end: end };
+    this.applyFilters();
   }
 
   setRangeFilter(start: number, end: number) {
-    this.rangeFilter = {start: start, end: end}
-    let ft = [...this.transactions]
+    this.rangeFilter = { start: start, end: end };
+    this.applyNoRangeFilters();
+  }
 
-    if(this.rangeFilter?.start) {
-      ft = ft.filter(t => 
-        parseFloat(t.amount) >= this.rangeFilter!.start!
-    )}
+  setCategoryFilter(categories: string[]) {
+    this.categoryFilter = [...categories]
+    this.applyFiltersFromCategory();
+  }
 
-    if(this.rangeFilter?.end) {
-      ft = ft.filter(t => 
-        parseFloat(t.amount) <= this.rangeFilter!.end!
-    )}
+  setMerchantFilter(merchants: string[]) {
+    this.merchantFilter = [...merchants];
+    this.applyFiltersFromMerchant();
+  }
+
+  private applyMerchantFilter(ft: Transaction[]): Transaction[] {
+    if (this.merchantFilter.length > 0) {
+      ft = ft.filter(t => this.merchantFilter.includes(t.merchant));
+    }
+    return ft;
+  }
+
+  private applyCategoryFilter(ft: Transaction[]): Transaction[] {
+    if (this.categoryFilter.length > 0) {
+      ft = ft.filter(t => this.categoryFilter.includes(t.category));
+    }
+    return ft;
+  }
+  private applyFilters() {
+    let ft = [...this.transactions];
+
+    ft = this.applyDateFilter(ft);
+
+    ft = this.applyMerchantFilter(ft);
+    ft = this.applyCategoryFilter(ft);
+
+    this.displayMerchants.set(this.getMerchants(ft));
+    this.displayCategories.set(this.getCategories(ft));
+
+    this.getDataRange(ft);
+    ft = this.applyRangeFilter(ft);
+
     this.filteredTransactions.set(ft);
   }
-  
+
+  private applyFiltersFromCategory() {
+    let ft = [...this.transactions];
+
+    ft = this.applyDateFilter(ft);
+    ft = this.applyMerchantFilter(ft);
+
+    this.displayCategories.set(this.getCategories(ft));
+    ft = this.applyCategoryFilter(ft);
+
+    this.displayMerchants.set(this.getMerchants(ft));
+
+    this.getDataRange(ft);
+    ft = this.applyRangeFilter(ft);
+
+    this.filteredTransactions.set(ft);
+  }
+
+  private applyFiltersFromMerchant() {
+    let ft = [...this.transactions];
+
+    ft = this.applyDateFilter(ft);
+    ft = this.applyCategoryFilter(ft);
+
+    this.displayMerchants.set(this.getMerchants(ft));
+    ft = this.applyMerchantFilter(ft);
+
+    this.displayCategories.set(this.getCategories(ft));
+
+    this.getDataRange(ft);
+    ft = this.applyRangeFilter(ft);
+
+    this.filteredTransactions.set(ft);
+  }
+
+  private applyDateFilter(ft: Transaction[]): Transaction[] {
+
+    if (this.dateFilter?.start) {
+      ft = ft.filter(t =>
+        t.date >= this.dateFilter!.start!
+      )
+    }
+
+    if (this.dateFilter?.end) {
+      ft = ft.filter(t =>
+        t.date <= this.dateFilter!.end!
+      )
+    }
+
+    return ft;
+  }
+
+  private applyRangeFilter(ft: Transaction[]): Transaction[] {
+
+    if (this.rangeFilter?.start) {
+      ft = ft.filter(t =>
+        parseFloat(t.amount) >= this.rangeFilter!.start!
+      )
+    }
+
+    if (this.rangeFilter?.end) {
+      ft = ft.filter(t =>
+        parseFloat(t.amount) <= this.rangeFilter!.end!
+      )
+    }
+    return ft
+  }
+
+  private applyNoRangeFilters() {
+    let ft = [...this.transactions];
+
+    ft = this.applyDateFilter(ft);
+    ft = this.applyCategoryFilter(ft);
+    this.displayCategories.set(this.getCategories(ft));
+
+    if (this.rangeFilter) {
+      ft = ft.filter(t => {
+        const amount = parseFloat(t.amount);
+        return amount >= this.rangeFilter!.start && amount <= this.rangeFilter!.end;
+      });
+    }
+
+    this.filteredTransactions.set(ft);
+  }
+
+  private getDataRange(ft: Transaction[]) {
+    const amounts = ft.map(t => parseFloat(t.amount)).filter(amount => !isNaN(amount));
+    const minAmount = Math.min(...amounts);
+    const maxAmount = Math.max(...amounts);
+
+    this.dataRange.set([minAmount, maxAmount]);
+  }
+
+  getCategories(ft: Transaction[]) {
+    return [...new Set(ft.map(transaction => transaction.category))].sort((a, b) => a.localeCompare(b));
+  }
+
+  getMerchants(ft: Transaction[]) {
+    return [...new Set(ft.map(transaction => transaction.merchant))].sort((a, b) => a.localeCompare(b));
+  }
+
   get transactionsData() {
     return this.filteredTransactions.asReadonly();
   }
-  
+
 
 }
 

@@ -54,7 +54,6 @@ export class MonthlyComponent {
       top10SpendingPerPerson[person] = Object.entries(categorySpending)
         .map(([category, amount]) => ({ category, amount }))
         .sort((a, b) => b.amount - a.amount)
-        .slice(0, 10);
     });
 
     // Update barChartData with the top 10 spending data

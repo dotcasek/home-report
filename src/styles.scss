@@ -1,19 +1,30 @@
 @use '@angular/material' as mat;
 @include mat.core();
-@import './app/themes/theme.css';
+// @import './app/themes/theme.css';
+
+
+html {
+    color-scheme: light;
+    @include mat.theme((
+      color: mat.$azure-palette,
+      typography: Roboto,
+      density: 0
+    ));
+}
 
 // html {
-//     color-scheme: light;
-//     @include mat.theme((
-//       color: mat.$azure-palette,
-//       typography: Roboto,
-//       density: 0
-//     ));
+//     color-scheme: dark;
 // }
 
 
 .darkMode {
     color-scheme: dark;
+    @include mat.theme((
+        color: mat.$cyan-palette,
+        typography: Roboto,
+        density: 0
+    ));
+  
 }
 
 html,

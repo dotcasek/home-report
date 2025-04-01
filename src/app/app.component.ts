@@ -5,6 +5,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatButtonModule} from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { FileDropComponent } from './components/file-drop/file-drop.component';
 import { OverviewCardComponent } from './components/overview-card/overview-card.component';
 import { MerchantCardComponent } from './components/merchant-card/merchant-card.component';
@@ -13,6 +14,7 @@ import { TransactionListComponent } from "./components/transaction-list/transact
 import { MonthlyComponent } from "./components/monthly/monthly.component";
 import {BreakpointObserver, LayoutModule} from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-root',
@@ -29,6 +31,8 @@ import { CommonModule } from '@angular/common';
     TransactionListComponent,
     MonthlyComponent,
     LayoutModule,
+    MatSidenavModule,
+    MatIconModule,
     CommonModule
 ],
   templateUrl: './app.component.html',

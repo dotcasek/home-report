@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { ChartConfiguration, ChartDataset } from 'chart.js';
+import { Chart, ChartConfiguration, ChartDataset } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { OverviewData, Transaction } from '../../models/OverviewData';
 import { FileReaderService } from '../../services/file-reader.service';
@@ -77,8 +77,22 @@ export class OverviewCardComponent {
       x: {
         beginAtZero: true
       }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          generateLabels: (chart) => {
+            return Chart.defaults.plugins.legend.labels.generateLabels(chart).map((label, i) => {
+              const value = chart.data.datasets[i]?.data[0] as number; // Assuming single data point per dataset
+                return {
+                ...label,
+                text: `${label.text}: ${value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`,
+                };
+            });
+          }
+        }
+      }
     }
-
   };
 
 }

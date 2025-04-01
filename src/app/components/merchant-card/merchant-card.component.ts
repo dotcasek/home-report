@@ -72,7 +72,7 @@ export class MerchantCardComponent {
       top10SpendingPerPerson[person] = Object.entries(merchantSpending)
         .map(([merchant, amount]) => ({ merchant, amount }))
         .sort((a, b) => b.amount - a.amount)
-        .slice(0, 10);
+        .slice(0, 20);
     });
     // Update barChartData with the top 10 spending data
     const uniqueMerchants = Array.from(
