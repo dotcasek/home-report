@@ -60,6 +60,15 @@ export class FileDropComponent {
   showLessMerchantsButton = signal(false);
 
   constructor() {
+    const filePath = '/test.csv';
+    fetch(filePath)
+      .then(response => response.blob())
+      .then(blob => {
+        const file = new File([blob], 'test.csv', { type: blob.type });
+        this.fileService.addFile(file);
+      })
+      .catch(error => console.error('Error loading file:', error));
+
     effect(() => {
       const range = this.fileService.dataRange();
       this.minAmount.set(Math.floor(range[0]));

@@ -43,7 +43,7 @@ export class FileReaderService {
 
       const transactions: Transaction[] = [];
       data.slice(1).forEach((row: any[]) => {
-        if (row.length > 0 && row[5] && row[2] != 2441) {
+        if (row.length > 0 && row[5]) {
 
           let merchant: string = row[3];
           merchant = merchant.replace('SQ *', '')
@@ -83,7 +83,7 @@ export class FileReaderService {
           const transaction: Transaction = {
             id: uuidv4(),
             date: new Date(row[0]), // Transaction Date
-            name: row[2] === 2441 ? 'Derek' : 'Madison', // Card No.
+            name: row[2] === 2441 || row[2] === 1234? 'Derek' : 'Madison', // Card No.
             merchant: merchant, // Description
             category: category, // Category
             amount: row[5]?.toString() || '', // Debit

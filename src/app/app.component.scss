@@ -31,8 +31,8 @@ mat-toolbar {
     height: calc(100vh - 64px);
     display: flex;
     flex-direction: column;
-    background: var(--mat-sys-surface);
-    color: var(--mat-sys-on-surface);
+    // background: var(--mat-sys-surface);
+    // color: var(--mat-sys-on-surface);
 }
 
 mat-sidenav-content {

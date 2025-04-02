@@ -35,15 +35,19 @@ body {
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
-    background: var(--mat-sys-surface);
-    color: var(--mat-sys-on-surface);
+    // background: var(--mat-sys-surface);
+    // color: var(--mat-sys-on-surface);
 }
 
 :root {
     mat-card {
         background: var(--mat-sys-surface-container);
         color: var(--mat-sys-on-surface);
-        border-color: var(--mat-sys-outline);
     }
+    // mat-expansion-panel {
+    //     background: var(--mat-sys-surface-container);
+    //     color: var(--mat-sys-on-surface);
+    //     border: 1px var(--mat-sys-outline-variant) solid;
+    // }
 }
 

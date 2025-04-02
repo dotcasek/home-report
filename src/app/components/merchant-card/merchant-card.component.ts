@@ -74,14 +74,30 @@ export class MerchantCardComponent {
         .sort((a, b) => b.amount - a.amount)
         .slice(0, 20);
     });
+
+    // Combine totals from each person for each merchant
+    const merchantTotals: Record<string, number> = {};
+    Object.values(top10SpendingPerPerson).forEach(personSpending => {
+      personSpending.forEach(({ merchant, amount }) => {
+        merchantTotals[merchant] = (merchantTotals[merchant] || 0) + amount;
+      });
+    });
+
+    // Sort merchants by total spending in descending order
+    const sortedMerchants = Object.entries(merchantTotals)
+      .sort(([, totalA], [, totalB]) => totalB - totalA)
+      .map(([merchant]) => merchant);
+
+    // Update uniqueMerchants to reflect the sorted order
+    const uniqueMerchants = sortedMerchants;
     // Update barChartData with the top 10 spending data
-    const uniqueMerchants = Array.from(
-      new Set(
-      Object.values(top10SpendingPerPerson)
-        .flat()
-        .map(item => item.merchant)
-      )
-    );
+    // const uniqueMerchants = Array.from(
+    //   new Set(
+    //   Object.values(top10SpendingPerPerson)
+    //     .flat()
+    //     .map(item => item.merchant)
+    //   )
+    // );
 
     this.barChartData = {
       labels: uniqueMerchants, // Unique merchant names
